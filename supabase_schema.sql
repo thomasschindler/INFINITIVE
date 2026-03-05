@@ -1,6 +1,7 @@
 -- Create profiles table
 CREATE TABLE public.profiles (
   id uuid REFERENCES auth.users ON DELETE CASCADE NOT NULL PRIMARY KEY,
+  email text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -31,13 +32,14 @@ ALTER TABLE public.user_progress ENABLE ROW LEVEL SECURITY;
 -- Profiles policies
 CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Admin can view all profiles" ON public.profiles FOR SELECT USING (EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = auth.uid() AND auth.users.email = 't@delodi.net'));
 
 -- Trigger to create a profile when a new user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id)
-  VALUES (new.id);
+  INSERT INTO public.profiles (id, email)
+  VALUES (new.id, new.email);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -52,6 +54,7 @@ CREATE POLICY "Videos are viewable by everyone" ON public.videos FOR SELECT USIN
 -- User Progress policies
 CREATE POLICY "Users can view own progress" ON public.user_progress FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own progress" ON public.user_progress FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admin can view all progress" ON public.user_progress FOR SELECT USING (EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = auth.uid() AND auth.users.email = 't@delodi.net'));
 
 -- Insert 38 videos
 INSERT INTO public.videos (youtube_id, title, description, order_index) VALUES 

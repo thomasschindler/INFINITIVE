@@ -7,6 +7,8 @@ export default function AppLayout() {
       <Stack.Screen name="video/[id]" options={{ title: 'Watch Video' }} />
       <Stack.Screen name="history" options={{ title: 'Watched Videos' }} />
       <Stack.Screen name="community" options={{ title: 'Welcome', headerShown: false }} />
+      <Stack.Screen name="account" options={{ title: 'Account Settings', presentation: 'modal' }} />
+      <Stack.Screen name="admin" options={{ title: 'Admin Panel' }} />
     </Stack>
   );
 }

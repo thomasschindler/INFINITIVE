@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect, Stack } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
+import { cancelDailyNotifications } from '../../lib/notifications';
 
 type Video = {
   id: string;
@@ -80,12 +82,9 @@ export default function Dashboard() {
 
     // If no next video, it means all 38 are watched. Redirect to community?
     if (!nextVid && vids.length > 0) {
+      cancelDailyNotifications(); // Stop notifications once finished
       router.replace('/community');
     }
-  };
-
-  const handleSignOut = () => {
-    supabase.auth.signOut();
   };
 
   if (loading) {
@@ -98,6 +97,16 @@ export default function Dashboard() {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen 
+        options={{
+          headerRight: () => (
+            <TouchableOpacity onPress={() => router.push('/account')} style={{ marginRight: 15 }}>
+              <Ionicons name="settings-sharp" size={24} color="#000" />
+            </TouchableOpacity>
+          )
+        }} 
+      />
+
       <Text style={styles.title}>Welcome to INFINITIVE</Text>
 
       <View style={styles.card}>
@@ -132,9 +141,14 @@ export default function Dashboard() {
         <Text style={styles.secondaryButtonText}>View Watched Videos</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-        <Text style={styles.signOutText}>Sign Out</Text>
-      </TouchableOpacity>
+      {session?.user?.email === 't@delodi.net' && (
+        <TouchableOpacity 
+          style={styles.adminButton}
+          onPress={() => router.push('/admin')}
+        >
+          <Text style={styles.adminButtonText}>Admin Panel</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -215,13 +229,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  signOutButton: {
-    marginTop: 'auto',
+  adminButton: {
+    backgroundColor: '#1976d2',
     padding: 15,
+    borderRadius: 8,
     alignItems: 'center',
+    marginTop: 'auto',
   },
-  signOutText: {
-    color: '#666',
+  adminButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });
