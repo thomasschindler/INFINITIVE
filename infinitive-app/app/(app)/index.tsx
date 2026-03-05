@@ -129,8 +129,10 @@ export default function Dashboard() {
               </View>
             )}
           </View>
-        ) : (
+        ) : videos.length > 0 ? (
           <Text style={styles.videoText}>You have completed all videos!</Text>
+        ) : (
+          <Text style={styles.videoText}>No videos are available in the database yet.</Text>
         )}
       </View>
 
