@@ -32,7 +32,7 @@ ALTER TABLE public.user_progress ENABLE ROW LEVEL SECURITY;
 -- Profiles policies
 CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Admin can view all profiles" ON public.profiles FOR SELECT USING (EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = auth.uid() AND auth.users.email = 't@delodi.net'));
+CREATE POLICY "Admin can view all profiles" ON public.profiles FOR SELECT USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND email = 't@delodi.net'));
 
 -- Trigger to create a profile when a new user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
@@ -54,7 +54,7 @@ CREATE POLICY "Videos are viewable by everyone" ON public.videos FOR SELECT USIN
 -- User Progress policies
 CREATE POLICY "Users can view own progress" ON public.user_progress FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own progress" ON public.user_progress FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Admin can view all progress" ON public.user_progress FOR SELECT USING (EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = auth.uid() AND auth.users.email = 't@delodi.net'));
+CREATE POLICY "Admin can view all progress" ON public.user_progress FOR SELECT USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND email = 't@delodi.net'));
 
 -- Insert 38 videos
 INSERT INTO public.videos (youtube_id, title, description, order_index) VALUES 
