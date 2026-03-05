@@ -114,18 +114,20 @@ export default function Dashboard() {
         
         {nextVideo ? (
           <View>
-            <Text style={styles.videoText}>Next up: {nextVideo.title}</Text>
             {canWatchToday ? (
-              <TouchableOpacity 
-                style={styles.primaryButton}
-                onPress={() => router.push(`/video/${nextVideo.id}`)}
-              >
-                <Text style={styles.buttonText}>Watch Now</Text>
-              </TouchableOpacity>
+              <>
+                <Text style={styles.videoText}>Next up: {nextVideo.title}</Text>
+                <TouchableOpacity 
+                  style={styles.primaryButton}
+                  onPress={() => router.push(`/video/${nextVideo.id}`)}
+                >
+                  <Text style={styles.buttonText}>Watch Now</Text>
+                </TouchableOpacity>
+              </>
             ) : (
               <View style={styles.lockedContainer}>
-                <Text style={styles.lockedText}>You've already watched a video today.</Text>
-                <Text style={styles.lockedSubText}>Come back tomorrow for the next one!</Text>
+                <Text style={styles.lockedText}>Great job today! 🎉</Text>
+                <Text style={styles.lockedSubText}>You've completed your daily video. Take a moment to reflect on what you learned, and we'll see you tomorrow for the next step in your journey!</Text>
               </View>
             )}
           </View>

@@ -114,10 +114,18 @@ export default function VideoScreen() {
         />
       </View>
       
-      {isCompleted && (
+      {isCompleted ? (
         <View style={styles.completedBadge}>
           <Text style={styles.completedText}>✓ Watched</Text>
         </View>
+      ) : (
+        <TouchableOpacity 
+          style={[styles.primaryButton, saving && styles.disabledButton]} 
+          onPress={handleVideoCompletion}
+          disabled={saving}
+        >
+          <Text style={styles.primaryButtonText}>Mark as Watched</Text>
+        </TouchableOpacity>
       )}
 
       {saving && (
@@ -169,6 +177,21 @@ const styles = StyleSheet.create({
   completedText: {
     color: '#2e7d32',
     fontWeight: 'bold',
+  },
+  primaryButton: {
+    backgroundColor: '#000',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  disabledButton: {
+    backgroundColor: '#999',
+  },
+  primaryButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   savingContainer: {
     flexDirection: 'row',
